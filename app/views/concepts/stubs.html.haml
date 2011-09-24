@@ -1,0 +1,10 @@
+Stubs are, for most intents and purposes, just like Symbols in a normal call to Relation#where (note the need for doubling up on the curly braces here, the first ones start the block, the second are the hash braces):
+
+%pre
+  Person.where{{name => 'Alice'}}.to_sql
+  Person.where(:name => 'Alice').to_sql
+
+
+  \=> "SELECT `people`.* FROM `people`  WHERE `people`.`name` = 'Alice'"
+
+You normally wouldn't bother using the DSL in this case, as a simple hash would suffice. However, stubs serve as a building block for keypaths, and keypaths are very handy.
