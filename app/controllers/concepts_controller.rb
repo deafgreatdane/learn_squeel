@@ -1,4 +1,7 @@
 class ConceptsController < ApplicationController
+  def syntax
+    
+  end
   def stubs
 
   end

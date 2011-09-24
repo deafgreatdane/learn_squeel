@@ -9,3 +9,6 @@ Person.create([
               { :first_name => "Alice", :last_name => "Angora", :birthday =>'1/1/1970', :state => "MN"},
               { :first_name => "Bob", :last_name => "Bogart", :birthday =>'2/1/1971', :state => "WI"}
               ])
+carl = Person.create( :first_name => "Carl", :last_name => "Cupid", :birthday =>'3/1/1972', :state => "MI")
+
+spot = Pet.create( :name =>"Spot", :kind => "dog", :person =>carl)
