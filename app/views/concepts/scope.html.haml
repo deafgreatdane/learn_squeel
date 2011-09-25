@@ -1,0 +1,96 @@
+%h2 Know thy Scope
+
+%p
+  Squeel's DSL creates its stubs dynamically using "method_missing" and all evaluation of the blocks
+  happens using "instance_eval". What this means is that "self" isn't the same inside the curly braces
+  as it is outside.
+
+%h2 Local Variable Access: OK
+%p
+  The simplest case of local variables works as you would expect
+%pre
+  :plain
+    state_search = 'MN'
+    # ActiveRecord
+    Person.where(:state => state_search).to_sql
+    # Squeel WON'T WORK
+    Person.where{ state == state_search }.to_sql
+%p
+  %b Gotcha:
+  Do not create any local variables that have names that match your database objects.
+%pre
+  :plain
+    state = 'MN'
+    # ActiveRecord
+    Person.where(:state => state).to_sql
+    # Squeel, The following WILL NOT WORK
+    # See the impossibility of generating a query from "state == state"?
+    Person.where{ state == state }.to_sql
+
+%h2 Instance Variable Access: use my{}
+%p
+  Instance variables (using @) imply an object scope. Since "self" inside the DSL is different than
+  what it is outside, Squeel provides the "my{}" construct.
+
+%pre
+  :plain
+    @state = 'MN'
+    # ActiveRecord
+    Person.where(:state => @state).to_sql
+    # Squeel, OK
+    Person.where{ state == my{@state} }.to_sql
+
+%p
+  %b Gotcha:
+  If you forget the "my{}", the instance variable gets evaluated in the DSL scope, which means
+  it's probably nil, so you'll end up with
+%pre
+  :plain
+    @state = 'MN'
+    Person.where{ state == @state }.to_sql
+    =>  "SELECT `people`.* FROM `people`  WHERE `people`.`state` IS NULL"
+%p
+  This even clearer when you see how it works with a more complex block, where we set instance
+  variable to something else entirely.
+%pre
+  :plain
+    @state = 'MN'
+    Person.where{ @state = 'AL'; state == @state }.to_sql
+    # => "SELECT `people`.* FROM `people`  WHERE `people`.`state` = 'AL'"
+    @state
+    # => "MN"
+
+%h2 Class Variable Access: use my{}
+%p
+  For the same reasons as instance variables, you need to use "my{}"
+
+%pre
+  :plain
+    class PersonFinder
+      attr_accessor :name_part
+      def persons
+        Person.where{first_name =~ my{self.name_part} + '%'}
+      end
+    end
+    pf = PersonFinder.new
+    pf.name_part = 'A'
+    pf.persons.to_sql
+    # => "SELECT `people`.* FROM `people`  WHERE `people`.`first_name` LIKE 'A%'"
+
+%p
+  The reasons is because
+  %b the DSL evaluates within its own scope inside the braces, not the scope outside the braces
+  The technical reason is because the DSL uses instance_eval, "self" doesn't have the same connotation
+  there as what you expect outside the block
+
+%h2 Use an argument to the block
+%p
+  If the "my{}" construct seems onerous, you can also use a block that accepts the Squeel context
+  as its first argument, such as
+%pre
+  :plain
+    @state = 'MN'
+    Person.where{ |squeel| squeel.state == @state }.to_sql
+%p
+  The downside to this is everything that's a squeel construct is going to have to be prefixed
+  with that argument.

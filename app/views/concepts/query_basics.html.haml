@@ -1,0 +1,124 @@
+%p
+  One of the most appealing portions of Squeel's power is to generate more complex SQL where conditions
+  than can be generated with straight Ruby in ActiveRecord.
+
+%p
+  The ActiveRecord documentation comes right out and declares,
+  "Only equality, range and subset checking are possible with Hash conditions."
+  This means if you want to represent more complex queries, you're stuck using the
+  array conditions, where you write your condition as "sql_fragment,args..."
+
+%pre
+  :plain
+    # SQL fragment first, then args
+    Person.where("state = ? and first_name like ?", "MN","A%").to_sql
+    # Squeel
+    Person.where{ (state == 'MN') & (first_name =~ 'A%')}.to_sql
+
+%p
+  You have to think harder about the ActiveRecord solution, including thinking about the SQL syntax in
+  the first argument, and then try to match up the subsequent args with the "?" placeholders. All those
+  mental gymnastics take energy, and are a good source of bugs.
+
+%h2 Operators
+%p
+  Squeel provides a full suite of operators for defining queries. Any of the Predicates, Operators, or Aliases
+  can be used to generate the corresponding SQL syntax
+
+%table
+  %tr
+    %th SQL
+    %th Predication
+    %th Operator
+    %th Alias
+  %tr
+    %td =
+    %td eq
+    %td ==
+    %td
+  %tr
+    %td !=
+    %td not_eq
+    %td != (1.9 only), ^ (1.8)
+    %td
+  %tr
+    %td LIKE
+    %td matches
+    %td =~
+    %td like
+  %tr
+    %td NOT LIKE
+    %td does_not_match
+    %td !~ (1.9 only)
+    %td not_like
+  %tr
+    %td <
+    %td lt
+    %td <
+    %td
+  %tr
+    %td <=
+    %td lteq
+    %td <=
+    %td lte
+  %tr
+    %td >
+    %td gt
+    %td >
+    %td
+  %tr
+    %td >=
+    %td gteq
+    %td >=
+    %td gte
+  %tr
+    %td IN
+    %td in
+    %td >>
+    %td
+  %tr
+    %td NOT IN
+    %td not_in
+    %td <<
+    %td
+  %tr
+    %td OR
+    %td
+    %td
+      \|
+  %tr
+    %td AND
+    %td
+    %td &
+
+%h2 Operator Precedence
+%p
+  Due to the way the DSL is evaluated, Squeel needs lots of parenthesis to keep the
+  operator precedence in line with what you expect. In practice, there is no precedence in
+  the Squeel operators, so you need to define it yourself
+%pre
+  :plain
+    # This will be a syntax error
+    Person.where{ state == 'MN' & first_name =~ 'A%' }.to_sql
+    # this works:
+    Person.where{ (state == 'MN') & (first_name =~ 'A%')}.to_sql
+    # => "SELECT `people`.* FROM `people`  WHERE ((`people`.`state` = 'MN' AND `people`.`first_name` LIKE 'A%'))"
+
+%p
+  %b Gotcha:
+  Don't try to use traditional binary operators like && or || (or their english equivalents "and" or "or")
+  in your squeel statement. Remember it's evaluating the code in the DSL, and those are binary operators for Ruby,
+  not SQL operators.
+
+%h2 Named Scopes
+%p
+  Squeel works in named scopes too!
+%pre
+  :plain
+    class Person < ActiveRecord::Base
+      def self.in_state(state_search)
+        where { state == my{state_search} }
+      end
+    end
+
+    Person.in_state('MN').to_sql
