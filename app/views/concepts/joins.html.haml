@@ -1,14 +1,63 @@
+
+%h2 Joins by relationship
 %p
-  Squeel simplifies queries that involve multiple tables
+  Squeel simplifies queries that involve multiple tables. It uses "key paths" to join together the
+  table objects with a dot notation, rather than the cumbersome hash syntax of Active Record
 
 %p
-  If we want to find all people who's pet has a toy that costs less than a dollar:
+  For example, if we want to find all people who's pet has a toy that costs less than a dollar:
 
 %pre
   :plain
+    # ActiveRecord
     Person.joins( :pets => :toys ).where( "toys.price < ?", 1).to_sql
+    # Squeel
     Person.joins{ pets.toys }.where{ toys.price < 1}
 
+%p
+  For a more complex example, crawling even deeper into the relationships, such as "find people shop at X for pet toys"
+%pre
+  :plain
+    # ActiveRecord
+    Person.joins( :pets => { :toys => :store }).where( "stores.name = ?", "Amazon").to_sql
+    # Squeel
+    Person.joins{ pets.toys.store}.where{ pets.toys.store.name == "Amazon"}.to_sql
+
+%p
+  A few key things to notice
+%ul
+  %li Complexity of joins in the hash syntax of ActiveRecord
+  %li Since the "where" clause in ActiveRecord uses SQL, the name of "stores" doesn't match what was declared in the join. Squeel preserves the same name
+
+%p
+  Finally, Squeel can handle when a model object is used more than once. In this example, "find people who buy their pets and toys at the same store"
+
+%pre
+  :plain
+    # ActiveRecord
+    Person.joins( :pets => { :toys => :store }, :pets => :store ).where( "stores.name = ?", "Amazon").to_sql
+    # Squeel
+    Person.joins{ [pets.toys.store, pets.store ]}.where{ pets.toys.store.id == stores_pets.id }.to_sql
+    Person.joins{ [pets.toys.store, pets.store ]}.where{ pets.toys.store.id == person.pets.store.id }.to_sql
+    Person.joins{ [pets.toys.store, pets.store ]}.where{ pets.toys.store.id.eq pets.store.id }.to_sql
+    Person.joins{ [pets.toys.store, pets.store ]}.where{ pets.toys.store.id.eq pets.store.id }.to_sql
+    Person.joins{ pets.toys.store}.joins{pets.store}.where{ pets.toys.store.id.eq pets.store.id }.to_sql
+    Person.joins{ pets.toys.store}.joins{pets.store}.where{ ( pets.toys.store.name == "Amazon" ) &( pets.store.name == 'Breeder')}.to_sql
+
+%h2 Functions
+%p
+  Squeel recognizes native SQL functions without extra escaping
+%pre
+  :plain
+    # ActiveRecord
+    Person.joins( :pets => { :toys => :store }).having( "sum( toys.price) > ?", 2 ).to_sql
+    # Squeel
+    Person.joins{ pets.toys.store }.having{ sum( toys.price) > 2 }.to_sql
+
+%hr
+------------------------
+%pre
+  :plain
     Person.joins(:pets).having("count(pets.id) > ?" , 1).to_sql
     Person.joins(:pets).having{ count(pets.id) > 1).to_sql
 
@@ -17,3 +66,9 @@
     Person.joins{ pets.toys}.having{ count(toys.id) > 1}.to_sql
 
     Person.joins{ pets.toys}.where{ pets.toys.name.eq_any ["bone","yarn"]}.to_sql
+
+%pre
+  :plain
+    # people who spent X at amazon
+    Person.joins( :pets => { :toys => :store }).where( "stores.name = ?", "Amazon").having( "sum( toys.price) > ?", 2).to_sql
+    Person.joins{ pets.toys.store}.where{ pets.toys.store.name == "Amazon"}.having(sum( toys.price) > 2).to_sql
