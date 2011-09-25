@@ -1,0 +1,19 @@
+%p
+  Squeel simplifies queries that involve multiple tables
+
+%p
+  If we want to find all people who's pet has a toy that costs less than a dollar:
+
+%pre
+  :plain
+    Person.joins( :pets => :toys ).where( "toys.price < ?", 1).to_sql
+    Person.joins{ pets.toys }.where{ toys.price < 1}
+
+    Person.joins(:pets).having("count(pets.id) > ?" , 1).to_sql
+    Person.joins(:pets).having{ count(pets.id) > 1).to_sql
+
+
+    Person.joins( :pets => :toys ).having( "count( toys.id) > ?", 1).to_sql
+    Person.joins{ pets.toys}.having{ count(toys.id) > 1}.to_sql
+
+    Person.joins{ pets.toys}.where{ pets.toys.name.eq_any ["bone","yarn"]}.to_sql

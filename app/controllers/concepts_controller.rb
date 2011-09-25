@@ -8,6 +8,10 @@ class ConceptsController < ApplicationController
   def scope
     
   end
+
+  def joins
+
+  end
   def stubs
 
   end

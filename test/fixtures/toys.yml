@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/Fixtures.html
+
+one:
+  pet_id: 1
+  name: MyString
+  price: 1.5
+
+two:
+  pet_id: 1
+  name: MyString
+  price: 1.5
