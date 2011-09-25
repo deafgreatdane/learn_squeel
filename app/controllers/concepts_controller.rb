@@ -12,10 +12,4 @@ class ConceptsController < ApplicationController
   def joins
 
   end
-  def stubs
-
-  end
-  def key_paths
-
-  end
 end
