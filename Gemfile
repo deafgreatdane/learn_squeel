@@ -1,7 +1,7 @@
 source 'http://rubygems.org'
 
 gem 'rails', '3.1.0'
-gem "squeel", :path => "../squeel"
+gem "squeel"
 
 gem "haml"
 gem "flutie"
