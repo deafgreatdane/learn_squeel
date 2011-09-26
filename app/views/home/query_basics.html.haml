@@ -23,75 +23,63 @@
 
 %h2 Operators
 %p
-  Squeel provides a full suite of operators for defining queries. Any of the Predicates, Operators, or Aliases
+  Squeel provides a full suite of operators for defining queries. Any of the Operators or Aliases
   can be used to generate the corresponding SQL syntax
 
 %table
   %tr
     %th SQL
-    %th Predication
     %th Operator
     %th Alias
   %tr
     %td =
-    %td eq
     %td ==
     %td
   %tr
     %td !=
-    %td not_eq
     %td != (1.9 only), ^ (1.8)
     %td
   %tr
     %td LIKE
-    %td matches
     %td =~
     %td like
   %tr
     %td NOT LIKE
-    %td does_not_match
     %td !~ (1.9 only)
     %td not_like
   %tr
     %td <
-    %td lt
     %td <
     %td
   %tr
     %td <=
-    %td lteq
     %td <=
     %td lte
   %tr
     %td >
-    %td gt
     %td >
     %td
   %tr
     %td >=
-    %td gteq
     %td >=
     %td gte
   %tr
     %td IN
-    %td in
     %td >>
     %td
   %tr
     %td NOT IN
-    %td not_in
     %td <<
     %td
   %tr
     %td OR
     %td
-    %td
       \|
+    %td
   %tr
     %td AND
-    %td
     %td &
-
+    %td
 %h2 Operator Precedence
 %p
   Due to the way the DSL is evaluated, Squeel needs lots of parenthesis to keep the

@@ -1,0 +1,100 @@
+%h1 Advanced Features
+%p
+  There are several advanced features that are covered in the Squeel documentation, but
+  this page will cover a few of them.
+%h2 Contextual Keypaths
+
+%p
+  We saw earlier how Squeel can manage to reference the same table in multiple ways
+  depending on how the query needs it. Usually those keypaths "do the right thing" in their
+  context, but sometimes you need to override them. You can prefix the keypath with a "~"
+  to go back to the main context. In this example, "find people who buy their pets and toys at the same store"
+
+%pre
+  :plain
+    Person.joins{ pets.toys.store }.joins { pets.store }.
+        where{ pets.toys.store.id == ~pets.store.id }.to_sql
+    # => "SELECT `people`.* FROM `people`
+    #      INNER JOIN `pets` ON `pets`.`person_id` = `people`.`id`
+    #      INNER JOIN `toys` ON `toys`.`pet_id` = `pets`.`id`
+    #      INNER JOIN `stores` ON `stores`.`id` = `toys`.`store_id`
+    #      INNER JOIN `stores` `stores_pets` ON `stores_pets`.`id` = `pets`.`store_id`
+    #      WHERE `stores`.`id` = `stores_pets`.`id`"
+
+
+%h2 Compound Conditions
+
+%p
+  The examples so far have used the traditional statement of "left operand right" in the where conditions,
+  but you can also put the operator as a predicate on the stub, such as
+%pre
+  :plain
+    Person.where{ name.matches "A%"}.to_sql
+
+%p The following predicates may be used:
+
+%table
+  %tr
+    %th SQL
+    %th Predicate
+  %tr
+    %td =
+    %td eq
+  %tr
+    %td !=
+    %td not_eq
+  %tr
+    %td LIKE
+    %td matches
+  %tr
+    %td NOT LIKE
+    %td does_not_match
+  %tr
+    %td <
+    %td lt
+  %tr
+    %td <=
+    %td lteq
+  %tr
+    %td >
+    %td gt
+  %tr
+    %td >=
+    %td gteq
+  %tr
+    %td IN
+    %td in
+  %tr
+    %td NOT IN
+    %td not_in
+
+%p
+  The power of this form comes from the fact that all of those predicates can be suffixed with "_any" or "_all"
+  and Squeel will generate the compound conditions for "OR" or "AND".
+
+%pre
+  :plain
+    Person.where{ name.matches_any ["A%","B%"]}.to_sql
+    # => "SELECT `people`.* FROM `people`
+    #      WHERE ((`people`.`name` LIKE 'A%' OR `people`.`name` LIKE 'B%'))"
+%p
+  The "_all" suffix won't support doing union queries, such as "find all people with a dog and cat."
+  The following query just won't return any results
+%pre
+  :plain
+    Person.joins{ pets}.where{ pets.kind.eq_all ["dog","cat"]}.to_sql
+    # => "SELECT `people`.* FROM `people`
+    #     INNER JOIN `pets` ON `pets`.`person_id` = `people`.`id`
+    #     WHERE ((`pets`.`kind` = 'dog' AND `pets`.`kind` = 'cat'))"
+
+
+%h2 Functions
+%p
+  Squeel recognizes native SQL functions without extra escaping
+%pre
+  :plain
+    # ActiveRecord
+    Person.joins( :pets => { :toys => :store }).having( "sum( toys.price) > ?", 2 ).to_sql
+    # Squeel
+    Person.joins{ pets.toys.store }.having{ sum( toys.price) > 2 }.to_sql
+

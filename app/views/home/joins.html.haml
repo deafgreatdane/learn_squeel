@@ -23,51 +23,31 @@
     Person.joins{ pets.toys.store}.where{ pets.toys.store.name == "Amazon"}.to_sql
 
 %p
-  A few key things to notice
+  A few things to notice:
 %ul
   %li Complexity of joins in the hash syntax of ActiveRecord
   %li Since the "where" clause in ActiveRecord uses SQL, the name of "stores" doesn't match what was declared in the join. Squeel preserves the same name
 
 %p
-  Finally, Squeel can handle when a model object is used more than once. In this example, "find people who buy their pets and toys at the same store"
+  Finally, Squeel can handle when a model object is used more than once.
+  In this example, "find people who buy their pets in MN and their toys at Amazon"
 
 %pre
   :plain
-    # ActiveRecord
-    Person.joins( :pets => { :toys => :store }, :pets => :store ).where( "stores.name = ?", "Amazon").to_sql
-    # Squeel
-    Person.joins{ [pets.toys.store, pets.store ]}.where{ pets.toys.store.id == stores_pets.id }.to_sql
-    Person.joins{ [pets.toys.store, pets.store ]}.where{ pets.toys.store.id == person.pets.store.id }.to_sql
-    Person.joins{ [pets.toys.store, pets.store ]}.where{ pets.toys.store.id.eq pets.store.id }.to_sql
-    Person.joins{ [pets.toys.store, pets.store ]}.where{ pets.toys.store.id.eq pets.store.id }.to_sql
-    Person.joins{ pets.toys.store}.joins{pets.store}.where{ pets.toys.store.id.eq pets.store.id }.to_sql
-    Person.joins{ pets.toys.store}.joins{pets.store}.where{ ( pets.toys.store.name == "Amazon" ) &( pets.store.name == 'Breeder')}.to_sql
-
-%h2 Functions
+    Person.joins{ pets.toys.store}.joins{pets.store}.where{ (pets.toys.store.name == 'Amazon') & (pets.store.state == 'MN')   }.to_sql
+    # => SELECT `people`.* FROM `people`
+    #    INNER JOIN `pets` ON `pets`.`person_id` = `people`.`id`
+    #    INNER JOIN `toys` ON `toys`.`pet_id` = `pets`.`id`
+    #    INNER JOIN `stores` ON `stores`.`id` = `toys`.`store_id`
+    #    INNER JOIN `stores` `stores_pets` ON `stores_pets`.`id` = `pets`.`store_id`
+    #    WHERE ((`stores`.`name` = 'Amazon' AND `stores_pets`.`state` = 'MN'))
 %p
-  Squeel recognizes native SQL functions without extra escaping
-%pre
-  :plain
-    # ActiveRecord
-    Person.joins( :pets => { :toys => :store }).having( "sum( toys.price) > ?", 2 ).to_sql
-    # Squeel
-    Person.joins{ pets.toys.store }.having{ sum( toys.price) > 2 }.to_sql
-
-%hr
-------------------------
-%pre
-  :plain
-    Person.joins(:pets).having("count(pets.id) > ?" , 1).to_sql
-    Person.joins(:pets).having{ count(pets.id) > 1).to_sql
+  Notice how the aliases given to the two uses of the "stores" table are properly referenced.
+  That won't happen in ActiveRecord's native use, where you'll be left trying to hardcode that dynamic
+  name it gets during the join (and then debugging it later whenever you need to tweak the query).
 
 
-    Person.joins( :pets => :toys ).having( "count( toys.id) > ?", 1).to_sql
-    Person.joins{ pets.toys}.having{ count(toys.id) > 1}.to_sql
 
-    Person.joins{ pets.toys}.where{ pets.toys.name.eq_any ["bone","yarn"]}.to_sql
-
-%pre
-  :plain
-    # people who spent X at amazon
-    Person.joins( :pets => { :toys => :store }).where( "stores.name = ?", "Amazon").having( "sum( toys.price) > ?", 2).to_sql
-    Person.joins{ pets.toys.store}.where{ pets.toys.store.name == "Amazon"}.having(sum( toys.price) > 2).to_sql
+%h2
+  Next:
+  = link_to "Advanced Features", "advanced"
