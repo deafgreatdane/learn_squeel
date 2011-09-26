@@ -12,7 +12,7 @@
   :plain
     state_search = 'MN'
     # ActiveRecord
-    Person.where(:state => state_search).to_sql
+    Person.where( :state => state_search ).to_sql
     # Squeel
     Person.where{ state == state_search }.to_sql
 %p
@@ -22,7 +22,7 @@
   :plain
     state = 'MN'
     # ActiveRecord
-    Person.where(:state => state).to_sql
+    Person.where( :state => state ).to_sql
     # Squeel, The following WILL NOT WORK
     # See the impossibility of generating a query from "state == state"?
     Person.where{ state == state }.to_sql
@@ -36,9 +36,9 @@
   :plain
     @state = 'MN'
     # ActiveRecord
-    Person.where(:state => @state).to_sql
+    Person.where( :state => @state ).to_sql
     # Squeel
-    Person.where{ state == my{@state} }.to_sql
+    Person.where{ state == my{ @state } }.to_sql
 
 %p
   %b Gotcha:

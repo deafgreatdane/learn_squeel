@@ -11,9 +11,9 @@
   denoted with curly braces. For example,
 %pre
   \# ActiveRecord
-  Person.where( :first_name => 'Alice').to_sql
+  Person.where( :first_name => 'Alice' ).to_sql
   \# Squeel
-  Person.where{ first_name == 'Alice'}.to_sql
+  Person.where{ first_name == 'Alice' }.to_sql
 
 %h2 Symbols vs Stubs
 %p
@@ -30,11 +30,11 @@
 
 %pre
   \# ActiveRecord multiple args using an array of values
-  Person.where( "first_name = ? and state = ?", 'Alice','MN').to_sql
+  Person.where( "first_name = ? and state = ?", 'Alice','MN' ).to_sql
   \# ActiveRecord multiple args using a hash
-  Person.where(:first_name =>'Alice', state =>'MN').to_sql
+  Person.where( :first_name =>'Alice', state =>'MN' ).to_sql
   \# Squeel, notice the lack of ruby delimiters like commas and colons
-  Person.where{ (first_name == 'Alice') & (state == 'MN') }.to_sql
+  Person.where{ ( first_name == 'Alice' ) & ( state == 'MN' ) }.to_sql
 
 %h2 Mix and Match
 Because both Squeel and ActiveRecord are built on top of ARel, you can mix and match. Get the power
@@ -42,9 +42,9 @@ where you need it!
 
 %pre
   \# a traditional join with squeel for the where
-  Person.joins(:pets).where{ state == 'MN'}.to_sql
+  Person.joins( :pets ).where{ state == 'MN' }.to_sql
   \# the reverse
-  Person.joins{pets}.where( state => 'MN').to_sql
+  Person.joins{ pets }.where( state => 'MN' ).to_sql
 
 %h2
   Next:

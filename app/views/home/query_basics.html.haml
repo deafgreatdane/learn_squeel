@@ -12,9 +12,9 @@
 %pre
   :plain
     # SQL fragment first, then args
-    Person.where("state = ? and first_name like ?", "MN","A%").to_sql
+    Person.where( "state = ? and first_name like ?", "MN","A%" ).to_sql
     # Squeel
-    Person.where{ (state == 'MN') & (first_name =~ 'A%')}.to_sql
+    Person.where{ ( state == 'MN' ) & ( first_name =~ 'A%' ) }.to_sql
 
 %p
   You have to think harder about the ActiveRecord solution, including thinking about the SQL syntax in
@@ -90,7 +90,7 @@
     # This will be a syntax error
     Person.where{ state == 'MN' & first_name =~ 'A%' }.to_sql
     # this works:
-    Person.where{ (state == 'MN') & (first_name =~ 'A%')}.to_sql
+    Person.where{ ( state == 'MN' ) & ( first_name =~ 'A%' ) }.to_sql
     # => "SELECT `people`.* FROM `people`  WHERE ((`people`.`state` = 'MN' AND `people`.`first_name` LIKE 'A%'))"
 
 %p

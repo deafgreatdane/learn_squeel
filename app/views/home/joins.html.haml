@@ -11,10 +11,10 @@
     # ActiveRecord
     Person.joins( :pets => :toys ).where( "toys.price < ?", 1).to_sql
     # Squeel
-    Person.joins{ pets.toys }.where{ toys.price < 1}
+    Person.joins{ pets.toys }.where{ toys.price < 1 }.to_sql
 
 %p
-  For a more complex example, crawling even deeper into the relationships, such as "find people shop at X for pet toys"
+  Next, crawling even deeper into the relationships, such as "find people shop at X for pet toys"
 %pre
   :plain
     # ActiveRecord
@@ -25,8 +25,11 @@
 %p
   A few things to notice:
 %ul
-  %li Complexity of joins in the hash syntax of ActiveRecord
-  %li Since the "where" clause in ActiveRecord uses SQL, the name of "stores" doesn't match what was declared in the join. Squeel preserves the same name
+  %li It gets hard to read ActiveRecord for deeper relations
+  %li
+    ActiveRecord creates a mismatch in identifiers. Since the "where" clauses uses a SQL fragment,
+    the name of "stores" doesn't match the "store" that was declared in the join.
+  %li Squeel stays consistent
 
 %p
   Finally, Squeel can handle when a model object is used more than once.

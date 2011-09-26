@@ -8,7 +8,10 @@
   We saw earlier how Squeel can manage to reference the same table in multiple ways
   depending on how the query needs it. Usually those keypaths "do the right thing" in their
   context, but sometimes you need to override them. You can prefix the keypath with a "~"
-  to go back to the main context. In this example, "find people who buy their pets and toys at the same store"
+  to go back to the main context.
+
+%p
+  In this example, "find people who buy their pets and toys at the same store"
 
 %pre
   :plain
@@ -78,6 +81,9 @@
     # => "SELECT `people`.* FROM `people`
     #      WHERE ((`people`.`name` LIKE 'A%' OR `people`.`name` LIKE 'B%'))"
 %p
+  The readability and maintainability of that syntax can't be matched by ActiveRecord.
+%p
+  %b Gotcha:
   The "_all" suffix won't support doing union queries, such as "find all people with a dog and cat."
   The following query just won't return any results
 %pre
@@ -98,3 +104,6 @@
     # Squeel
     Person.joins{ pets.toys.store }.having{ sum( toys.price) > 2 }.to_sql
 
+%h2
+  Finally:
+  = link_to "Credits", "/home/credits"
