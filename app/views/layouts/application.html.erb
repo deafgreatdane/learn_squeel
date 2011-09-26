@@ -7,8 +7,19 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+<div id="header" class="block">
+  <h1>Learn Squeel</h1>
 
-<%= yield %>
+</div>
+<div id="navigation" class="left block" style="width: 20%;">
 
+  <%= render :partial =>"/home/navigation" %>
+
+</div>
+<div id="content" class="left block" style="width: 75%;">
+
+  <%= yield %>
+
+</div>
 </body>
 </html>

@@ -1,0 +1,12 @@
+%ul
+  %li= link_to_unless_current "Introduction", {:controller =>"home", :action =>"index"}
+  %li= link_to_unless_current "Basic Syntax", {:controller =>"concepts", :action =>"syntax"}
+  %li= link_to_unless_current "Understanding Scope", {:controller =>"concepts", :action =>"scope"}
+  %li= link_to_unless_current "Query Basics", {:controller =>"concepts", :action =>"query_basics"}
+  %li= link_to_unless_current "Joins", {:controller =>"concepts", :action =>"joins"}
+
+%p
+  Other
+%ul
+  %li= link_to_unless_current "Model", {:controller =>"home", :action =>"model"}
+  %li= link_to_unless_current "Credits", {:controller =>"home", :action =>"credits"}

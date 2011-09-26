@@ -1,16 +1,56 @@
+%h1 Introduction to Learning Squeel
 %p
   This application contains examples that can be used to tinker with the features of
   the wonderful
-  = link_to "squeel gem," , "https://github.com/ernie/squeel"
-  which makes complex SQL queries intuitive and more ruby-like.
+  = link_to "Squeel gem," , "https://github.com/ernie/squeel"
+  which makes complex SQL queries intuitive and more Ruby-like. It's one thing to read
+  reference documentation to learn a framework, it's another to have actual data and models to
+  experiment with while you're learning it.
+
 %p
   To use this application, we assume
 %ul
   %li
-    you have know SQL well enough that you can
+    you know SQL well enough that you can
     articulate and understand the complex queries that you're trying to build with Squeel.
   %li
-    are familiar with using the rails console. Many of the examples are best played with interactively.
+    you are familiar with using the rails console. Many of the examples are best played with interactively.
 
+%h2 Installation
+%p
+  This application is best experienced in the console. You can run the web portion of it locally, or you can
+  use it online at
+  = link_to "http://learn-squeel.heroku.com", "http://learn-squeel.heroku.com"
+
+%pre
+  :plain
+    git clone TODO
+    cd learn_squeel
+    rake db:setup
+    rails console
+
+%h2 How To
+%p
+  This tutorial walks you through the features of Squeel with interative examples. Anything
+  you see in a code block can be pasted directly into the rails console:
+%pre
+  :plain
+    puts "hello world"
+
+%p
+  Return values and other comments are prefixed with a "#" so as to not confuse the console. It's perfectly
+  fine to paste those lines into the console too, they just don't do anything
+
+%pre
+  :plain
+    # output looks like this:
+    # => "hello world"
+
+%p
+  Most of the query builder statements end in ".to_sql", so you can see exactly what
+  SQL would be produced. If you'd rather see the actual data, just erase that bit of the statement.
+  All queries in these pages have corresponding data seeded for them.
+  
 %h2
-  = link_to "Let's begin", "/concepts/stubs"
+  Next:
+  = link_to "Basic Syntax", "/concepts/syntax"

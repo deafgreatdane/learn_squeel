@@ -1,4 +1,4 @@
-%h2 Know thy Scope
+%h1 Understanding Scope
 
 %p
   Squeel's DSL creates its stubs dynamically using "method_missing" and all evaluation of the blocks
@@ -13,7 +13,7 @@
     state_search = 'MN'
     # ActiveRecord
     Person.where(:state => state_search).to_sql
-    # Squeel WON'T WORK
+    # Squeel
     Person.where{ state == state_search }.to_sql
 %p
   %b Gotcha:
@@ -37,7 +37,7 @@
     @state = 'MN'
     # ActiveRecord
     Person.where(:state => @state).to_sql
-    # Squeel, OK
+    # Squeel
     Person.where{ state == my{@state} }.to_sql
 
 %p
@@ -48,7 +48,7 @@
   :plain
     @state = 'MN'
     Person.where{ state == @state }.to_sql
-    =>  "SELECT `people`.* FROM `people`  WHERE `people`.`state` IS NULL"
+    # =>  "SELECT `people`.* FROM `people`  WHERE `people`.`state` IS NULL"
 %p
   This even clearer when you see how it works with a more complex block, where we set instance
   variable to something else entirely.
@@ -77,12 +77,6 @@
     pf.persons.to_sql
     # => "SELECT `people`.* FROM `people`  WHERE `people`.`first_name` LIKE 'A%'"
 
-%p
-  The reasons is because
-  %b the DSL evaluates within its own scope inside the braces, not the scope outside the braces
-  The technical reason is because the DSL uses instance_eval, "self" doesn't have the same connotation
-  there as what you expect outside the block
-
 %h2 Use an argument to the block
 %p
   If the "my{}" construct seems onerous, you can also use a block that accepts the Squeel context
@@ -94,3 +88,7 @@
 %p
   The downside to this is everything that's a squeel construct is going to have to be prefixed
   with that argument.
+
+%h2
+  Next:
+  = link_to "Query Basics", "/concepts/query_basics"

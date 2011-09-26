@@ -1,6 +1,7 @@
+%h1 Basic Syntax
 %p
   Squeel works by creating a DSL (Domain Specific Language) on top of the traditional ActiveRecord methods.
-  This has some implications that changes how we code queries
+  This has some implications that changes how we code queries.
 %h2 Methods vs Blocks
 %p
   We're used to calling the ActiveRecord
@@ -37,10 +38,14 @@
 
 %h2 Mix and Match
 Because both Squeel and ActiveRecord are built on top of ARel, you can mix and match. Get the power
-where you need it
+where you need it!
 
 %pre
   \# a traditional join with squeel for the where
   Person.joins(:pets).where{ state == 'MN'}.to_sql
   \# the reverse
   Person.joins{pets}.where( state => 'MN').to_sql
+
+%h2
+  Next:
+  = link_to "Understanding Scope", "/concepts/scope"

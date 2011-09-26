@@ -2,7 +2,33 @@
  * This is a manifest file that'll automatically include all the stylesheets available in this directory
  * and any sub-directories. You're free to add application-wide styles to this file and they'll appear at
  * the top of the compiled file, but it's generally better to create a new file per style scope.
+ *= require _flutie
  *= require_self
  *= require_tree .
- *= require _flutie
 */
+
+#header {
+    background-color: #d3d3d3;
+    border-bottom: 1px solid #a9a9a9;
+}
+#navigation {
+}
+#content {
+    border-left:  1px solid #a9a9a9
+
+}
+
+pre {
+    background: #eeeeee;
+    border: 1px solid #a9a9a9;
+    padding:  3px 6px;
+}
+.block {
+    padding:  10px;
+}
+.left {
+    float: left;
+}
+td {
+    vertical-align: top;
+}
